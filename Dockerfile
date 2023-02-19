@@ -53,15 +53,15 @@ RUN git clone https://github.com/ProtonMail/proton-bridge.git && \
 
 FROM ${RUNTIME_BASE}:${RUNTIME_TAG}
 
-EXPOSE 25/tcp
-EXPOSE 143/tcp
+EXPOSE 2025/tcp
+EXPOSE 20143/tcp
 
 # Install dependencies and protonmail bridge
 # RUN apt-get update \
 #     && apt-get install -y --no-install-recommends socat pass libsecret-1-0 ca-certificates \
 #     && rm -rf /var/lib/apt/lists/*
 
-RUN apk add --no-cache bash socat libsecret
+RUN apk add --no-cache bash socat libsecret gcompat libc6-compat
 
 # RUN groupadd --gid 10001 proton \
 #     && useradd --uid 10001 --gid proton --shell /bin/bash --create-home proton
@@ -70,12 +70,14 @@ RUN addgroup -g 10001 proton && \
   adduser -u 10001 -G proton -h /home/proton -D proton
 
 USER proton
+WORKDIR /home/proton
 
 # Copy bash scripts
-COPY gpgparams entrypoint.sh /protonmail/
+COPY gpgparams .
+COPY entrypoint.sh .
 
 # Copy protonmail
-COPY --from=build /build/proton-bridge/bridge /protonmail/
-COPY --from=build /build/proton-bridge/proton-bridge /protonmail/
+COPY --from=build /build/proton-bridge/bridge .
+COPY --from=build /build/proton-bridge/proton-bridge .
 
-ENTRYPOINT ["bash", "/protonmail/entrypoint.sh"]
+CMD ["bash", "/home/proton/entrypoint.sh"]
