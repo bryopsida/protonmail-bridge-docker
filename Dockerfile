@@ -1,5 +1,7 @@
+ARG GO_BUILD_TAG=latest
+ARG UBUNTU_TAG=latest
 # Use carlosedp/golang for riscv64 support
-FROM carlosedp/golang:1.18 AS build
+FROM carlosedp/golang:${GO_BUILD_TAG} AS build
 
 # Install dependencies
 RUN apt-get update && apt-get install -y git build-essential libsecret-1-dev
@@ -9,8 +11,7 @@ WORKDIR /build/
 COPY build.sh VERSION /build/
 RUN bash build.sh
 
-FROM ubuntu:jammy
-LABEL maintainer="Xiaonan Shen <s@sxn.dev>"
+FROM ubuntu:${UBUNTU_TAG}
 
 EXPOSE 25/tcp
 EXPOSE 143/tcp
