@@ -1,10 +1,24 @@
-ARG GO_BUILD_TAG=latest
 ARG UBUNTU_TAG=latest
-# Use carlosedp/golang for riscv64 support
-FROM carlosedp/golang:${GO_BUILD_TAG} AS build
+FROM ubuntu:${UBUNTU_TAG} AS build
 
 # Install dependencies
-RUN apt-get update && apt-get install -y git build-essential libsecret-1-dev
+RUN apt-get update && \
+    apt-get install -y \
+        golang \
+        ca-certificates \
+        curl \
+        libc6 \
+        git \
+        build-essential \
+        libsecret-1-dev
+
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+RUN export PATH="/usr/local/go/bin:$PATH"; \
+    /usr/local/go/bin/go version
+
 
 # Build
 WORKDIR /build/
