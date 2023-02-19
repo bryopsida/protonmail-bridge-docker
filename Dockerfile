@@ -61,7 +61,7 @@ EXPOSE 143/tcp
 #     && apt-get install -y --no-install-recommends socat pass libsecret-1-0 ca-certificates \
 #     && rm -rf /var/lib/apt/lists/*
 
-RUN apk --no-cache bash socat libsecret
+RUN apk add --no-cache bash socat libsecret
 
 # RUN groupadd --gid 10001 proton \
 #     && useradd --uid 10001 --gid proton --shell /bin/bash --create-home proton
