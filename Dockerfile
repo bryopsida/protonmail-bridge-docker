@@ -35,6 +35,11 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends socat pass libsecret-1-0 ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+RUN groupadd --gid 10001 proton \
+    && useradd --uid 10001 --gid proton --shell /bin/bash --create-home proton
+
+USER proton
+
 # Copy bash scripts
 COPY gpgparams entrypoint.sh /protonmail/
 
