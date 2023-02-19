@@ -1,5 +1,8 @@
 ARG UBUNTU_TAG=latest
-FROM ubuntu:${UBUNTU_TAG} AS build
+ARG BUILD_BASE=ubuntu
+ARG RUNTIME_BASE=ubuntu
+
+FROM ${BUILD_BASE}:${UBUNTU_TAG} AS build
 
 # Install dependencies
 RUN apt-get update && \
@@ -12,20 +15,12 @@ RUN apt-get update && \
         build-essential \
         libsecret-1-dev
 
-ENV GOPATH /go
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
-
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-RUN export PATH="/usr/local/go/bin:$PATH"; \
-    /usr/local/go/bin/go version
-
-
 # Build
 WORKDIR /build/
-COPY build.sh VERSION /build/
+COPY build.sh /build/
 RUN bash build.sh
 
-FROM ubuntu:${UBUNTU_TAG}
+FROM ${RUNTIME_BASE}:${UBUNTU_TAG}
 
 EXPOSE 25/tcp
 EXPOSE 143/tcp
